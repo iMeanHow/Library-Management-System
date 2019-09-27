@@ -1,15 +1,16 @@
-class Book < ActiveRecord::Base
-  belongs_to Library
-  validates :ISBN, presence => true
-  validates :Title, presence => true
-  validates :Author, presence => true
-  validates :Language, presence => true
-  validates :Published, presence => true
-  validates :Edition, presence => true
-  validates :Title, presence => true
-  validates :ImageOfTheFrontCoverPath, presence => true
-  validates :Subject, presence => true
-  validates :Summary, presence => true
-  validates :IsSpecialCollectionItem, presence => true
-  validates :Count, presence => true
+class Book < ApplicationRecord
+  # belongs_to :library
+  # has_many :book_history
+  validates :is_special , presence: false
+  validates :is_delete, presence: false
+  validates :borrowed, presence: false
+  validates :isbn, uniqueness: true, presence: false
+  validates :title, presence: false
+  validates :authors, presence: false
+  validates :language, presence: false
+  validates :edition, presence: false
+  validates :published_time, presence: false
+  validates :subject, presence: false
+  validates :image, presence: false
+  validates :summary, presence: false
 end

@@ -1,5 +1,6 @@
-class Student < User
-  validates :EducationalLevel, presence: true
-  validates :University, presence: true
-  validates :MaximumNumberOfBooks, presence: true
+class Student < ApplicationRecord
+  has_secure_password
+  validates :email, uniqueness: true, presence: true
+  validates :name, presence: true
+
 end

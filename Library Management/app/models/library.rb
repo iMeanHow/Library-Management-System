@@ -1,9 +1,8 @@
-class Library < ActiveRecord::Base
+class Library < ApplicationRecord
   has_many :books
-
-  validates :Name, presence: true
-  validates :University, presence: true
-  validates :Location, presence: true
-  validates :MaximumNumberOfDaysABookCanBeBorrowed, presence: true
-  validates :OverdueFines, presence: true
+  validates :university, presence: true
+  validates :name, uniqueness: true, presence: true
+  validates :location, presence: true
+  validates :max_borrow, presence: true
+  validates :overdue_fine, presence: true
 end
