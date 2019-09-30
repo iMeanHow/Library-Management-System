@@ -1,8 +1,14 @@
 class LibrariesController < ApplicationController
   before_action :set_library, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify
+  before_action :is_authorize
   # GET /libraries
   # GET /libraries.json
+  def is_authorize
+    if !verify_admin
+      redirect_to root_url
+    end
+  end
   def index
     @libraries = Library.all
   end
@@ -69,6 +75,6 @@ class LibrariesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def library_params
-      params.fetch(:library, {})
+      params.require(:user).permit(:name,:location,:max_borrow,:overdue_fine,:university)
     end
 end

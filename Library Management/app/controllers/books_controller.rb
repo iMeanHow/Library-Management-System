@@ -1,71 +1,73 @@
 class BooksController < ApplicationController
-  before_action :set_book, only: [:show, :edit, :update, :destroy]
+  before_action :verify
+  before_action :set_book, only: [:show, :edit, :update, :destroy,:borrow,:book_request]
 
   def borrow
     @book=Book.find(params[:id])
-
-    if @book.is_borrowed==false
-      @book.is_borrowed=true
-      if @book.save
-        render :show, status: ok, location: @book
-      else
-        render :show, status: :unprocessable_entity
-      end
-      # create_history(@book,@session[:id])
-    else
-
-    end
-  end
-
-  def create_history(book,student)
-    @book=book
-    @student=student
+    @book.nums_borrowed =@book.nums_borrowed+1
     @book_history=BookHistory.new
-    @book_history.time=Time.current
-    @book_history.book_ISBN=@book.isbn
+    @book_history.borrow_time=Time.now
+    @book_history.book_isbn=@book.isbn
     @book_history.book_title=@book.title
-    @book_history.student_name=@student.name
-    @book_history.student_email=@student.email
+    @book_history.student_name=current_user.name
+    @book_history.student_email=current_user.email
     @book_history.is_returned=false
-  end
 
-  def return
-    @book=Book.find(params[:isbn])
-    # @student=Student.find(@session[:id])
-    @book_history=BookHistory.find(params[:id])
-    @book_history.is_returned=true
-    @book.is_borrowed=false
-    if @book.save && @book_history.save
-      render :show, status: ok, location: @book
-    else
-      render :show, status: :unprocessable_entity
+    respond_to do |format|
+      if @book.save && @book_history.save
+        # redirect_to @book, notice: 'Book was successfully borrowed.'
+        # render :show, status: :ok, location: @book,alert: 'Book was successfully borrowed.'
+        format.html { redirect_to @book, notice: 'Book was successfully borrowed.' }
+        format.json { render :show, status: :ok, location: @book }
+      else
+        # render :show
+        format.html { render :edit }
+        format.json { render json: @book.errors, status: :unprocessable_entity }
+        # render json: @book.errors, status: :unprocessable_entity
+      end
     end
+
   end
 
-  def request_book
+  def book_request
+    @book=Book.find(params[:id])
     @book_request=BookRequest.new
-  end
+    @book_request.book_title=@book.title
+    puts "==========================="
+    puts @book_request.book_title
+    @book_request.book_isbn=@book.isbn
+    @book_request.student_name=current_user.name
+    @book_request.student_email=current_user.email
+    @book_request.is_delete = false
+    @book_request.is_accomplished = false
 
-  def cancel_request
-    @book_request=BookRequest.find(params[:id])
-    @book_request.is_delete=true
-    if @book_request.save
-      render :show, status: ok, location: @book
-    else
-      render :show, status: :unprocessable_entity
+    respond_to do |format|
+      if @book_request.save
+        format.html { redirect_to book_requests_path, notice: 'Book was successfully requested.' }
+        format.json { render :show, status: :ok, location: @book }
+
+      else
+        # # render :show
+        format.html { redirect_to book_requests_path, notice: 'Requeste Failed.' }
+        format.json { render json: @book_request.errors, status: :unprocessable_entity }
+
+      end
     end
   end
+
+
   # GET /books
   # GET /books.json
   def index
     # @books = Book.paginate_by_sql("select * from books where is_delete='false'")
-    @books=Book.all
+    @books=Book.find_by_sql("select * from books where is_delete=false ")
   end
 
   # GET /books/1
   # GET /books/1.json
   def show
-    # @books = Book.all
+    @books = Book.find(params[:id])
+    puts @book
   end
 
   # GET /books/new
@@ -81,7 +83,15 @@ class BooksController < ApplicationController
   # POST /books
   # POST /books.json
   def create
-    @book = Book.new(book_params)
+    @user=current_user
+    if verify_admin || verify_librarian
+    @book=Book.new(book_params)
+
+    if(@user.role=='librarian')
+      @book.library=@user.library
+    end
+    @book.is_delete=false
+    @book.nums_borrowed=0
 
     respond_to do |format|
       if @book.save
@@ -92,11 +102,15 @@ class BooksController < ApplicationController
         format.json { render json: @book.errors, status: :unprocessable_entity }
       end
     end
+    else
+      redirect_to books_url, notice: 'Unauthorized action!'
+    end
   end
 
   # PATCH/PUT /books/1
   # PATCH/PUT /books/1.json
   def update
+    if verify_admin || (verify_librarian && current_user.library == @book.library)
     respond_to do |format|
       if @book.update(book_params)
         format.html { redirect_to @book, notice: 'Book was successfully updated.' }
@@ -106,17 +120,29 @@ class BooksController < ApplicationController
         format.json { render json: @book.errors, status: :unprocessable_entity }
       end
     end
+    else
+      format.html { redirect_to books_url, notice: 'Unauthorized action!' }
+      format.json { head :no_content }
+    end
   end
 
   # DELETE /books/1
   # DELETE /books/1.json
   def destroy
+
     @book=Book.find(params[:id])
+    if verify_admin || (verify_librarian && current_user.library == @book.library)
     @book.is_delete=true
     @book.save
     respond_to do |format|
-      format.html { redirect_to books_url, notice: 'Book was successfully destroyed.' }
+      format.html { redirect_to books_url, notice: 'Book was successfully deleted.' }
       format.json { head :no_content }
+    end
+    else
+      respond_to do |format|
+        format.html { redirect_to books_url, notice: 'Unauthorized action!' }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -128,6 +154,6 @@ class BooksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_params
-      params.require(:book).permit(:isbn,:title,:summary,:borrowed,:is_special,:is_delete,:published_time,:subject,:language,:authors,:edition,:image,)
+      params.require(:book).permit(:image,:isbn,:title,:summary,:nums_total, :nums_borrowed, :is_special,:is_delete,:published_time,:subject,:language,:authors,:edition,:library)
     end
 end

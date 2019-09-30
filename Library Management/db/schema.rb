@@ -10,19 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_26_224027) do
+ActiveRecord::Schema.define(version: 2019_09_29_022019) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "admins", force: :cascade do |t|
+    t.datetime "time"
+    t.string "book_title"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "book_histories", force: :cascade do |t|
+    t.string "book_isbn"
+    t.boolean "is_returned"
+    t.string "book_title"
+    t.string "student_name"
+    t.string "student_email"
+    t.time "borrow_time"
+    t.time "return_time"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "book_requests", force: :cascade do |t|
+    t.string "book_isbn"
+    t.boolean "is_delete"
+    t.boolean "is_accomplished"
+    t.string "book_title"
+    t.string "student_name"
+    t.string "student_email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -44,9 +62,23 @@ ActiveRecord::Schema.define(version: 2019_09_26_224027) do
     t.string "summary"
     t.boolean "is_special"
     t.boolean "is_delete"
-    t.boolean "borrowed"
+    t.integer "nums_total"
+    t.integer "nums_borrowed"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "image_file_name"
+    t.string "image_content_type"
+    t.integer "image_file_size"
+    t.datetime "image_updated_at"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.string "commenter"
+    t.text "body"
+    t.bigint "admin_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["admin_id"], name: "index_comments_on_admin_id"
   end
 
   create_table "librarians", force: :cascade do |t|
@@ -55,6 +87,10 @@ ActiveRecord::Schema.define(version: 2019_09_26_224027) do
   end
 
   create_table "libraries", force: :cascade do |t|
+    t.string "name"
+    t.string "location"
+    t.integer "max_borrow"
+    t.integer "overdue_fine"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -67,9 +103,14 @@ ActiveRecord::Schema.define(version: 2019_09_26_224027) do
   create_table "users", force: :cascade do |t|
     t.string "email"
     t.string "password_digest"
+    t.string "name"
+    t.string "library"
+    t.integer "fine"
+    t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "comments", "admins"
 end

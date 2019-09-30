@@ -10,7 +10,35 @@
       </ul>
     </div>
   <% end %>
-
+  <div class="field">
+    <%= form.label :book_title %><br>
+    <%= form.text_field :book_title %>
+  </div>
+  <div class="field">
+    <%= form.label :book_isbn %><br>
+    <%= form.text_field :book_isbn %>
+  </div>
+  <div class="field">
+  <%= form.label :student_name %><br>
+  <%= form.text_field :student_name %>
+</div>
+  <div class="field">
+    <%= form.label :student_email %><br>
+    <%= form.text_field :student_email %>
+  </div>
+  <div class="field">
+    <%= form.label :student_email %><br>
+    <%= form.text_field :student_email %><br>
+  </div>
+  <div class="field">
+    <%= form.label :is_delete %><br>
+  <%= form.select :is_delete, options_for_select([false,true]), :prompt => 'Select One'%><br>
+  </div>
+  <div class="field">
+    <%= form.label :is_accomplished %><br>
+  <%= form.select :is_accomplished, options_for_select([false,true]), :prompt => 'Select One' %><br>
+  </div>
+<!--  </select>-->
   <div class="actions">
     <%= form.submit %>
   </div>

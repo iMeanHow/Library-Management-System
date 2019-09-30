@@ -1,6 +1,6 @@
 class BookSearchesController < ApplicationController
   before_action :set_book_search, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify
   # GET /book_searches
   # GET /book_searches.json
   def index

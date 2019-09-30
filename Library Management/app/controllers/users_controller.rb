@@ -1,10 +1,20 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify,except: [:new,:create]
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    if(current_user.role=='admin')
+      @users = User.all
+    end
+    if(current_user.role=='librarian')
+      @user=User.find_by_sql("select * from users where role='student'")
+    end
+
+    if(current_user.role=='student')
+
+      @user=User.find_by(:email => current_user.email)
+    end
   end
 
   # GET /users/1
@@ -25,9 +35,14 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-
+    if(@user.email=='admin@test.com')
+      @user.role='admin'
+    else
+      @user.role='student'
+    end
     respond_to do |format|
       if @user.save
+        session[:user_id] = @user.id
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
       else
@@ -69,6 +84,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email,:name, :password, :password_confirmation, :role, :library, :fine)
     end
 end

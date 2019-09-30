@@ -1,6 +1,6 @@
 class BookHistoriesController < ApplicationController
   before_action :set_book_history, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify
   # GET /book_histories
   # GET /book_histories.json
   def index
@@ -12,6 +12,9 @@ class BookHistoriesController < ApplicationController
   def show
   end
 
+  def return
+
+  end
   # GET /book_histories/new
   def new
     @book_history = BookHistory.new
@@ -69,6 +72,6 @@ class BookHistoriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_history_params
-      params.fetch(:book_history, {})
+      params.require(:book_history).permit(:borrow_time,:return_time,:overdue_fine,:book_title,:book_isbn,:student_name,:student_email)
     end
 end

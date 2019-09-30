@@ -9,7 +9,7 @@ capybara-*.html
 /coverage/
 /spec/tmp
 /spec/tmpb
-.idea/
+/.idea/
 *.orig
 rerun.txt
 pickle-email-*.html
@@ -49,6 +49,3 @@ bower.json
 # Ignore node_modules
 node_modules/
 
-.idea/.generators
-.idea/LibraryManagement.iml
-.idea/vcs.xml

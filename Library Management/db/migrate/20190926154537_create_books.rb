@@ -12,8 +12,9 @@ class CreateBooks < ActiveRecord::Migration[6.0]
       t.string :summary
       t.boolean :is_special
       t.boolean :is_delete
-      t.Boolean :borrowed
-
+      # t.boolean :borrowed
+      t.integer :nums_total
+      t.integer :nums_borrowed
       t.timestamps
     end
   end

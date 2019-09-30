@@ -1,6 +1,151 @@
 <h1>Editing User</h1>
+<% if current_user %>
 
-<%= render 'form', user: @user %>
+  Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
+  <%= link_to "Log Out", logout_path %><br>
+  <%= link_to "Home", root_url %><br><br>
+<%else %>
+  <%= link_to "Sign Up", signup_path %> or
+  <%= link_to "Log In", login_path %><br><br>
+<% end %>
+<%if current_user.role=='admin' %>
+ <h2>Hi, Admin</h2>
+  <%= form_with(model: @user, local: true) do |form| %>
+    <% if @user.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    <% current_user==nil %>
+    <div class="field">
+      <%= form.label :name %>
+      <%= form.text_field :name %>
+    </div>
+
+    <div class="field">
+      <%= form.label :email %>
+      <%= form.text_field :email %>
+    </div>
+
+    <div class="field">
+      <%= form.label :password %>
+      <%= form.password_field :password %>
+    </div>
+
+    <div class="field">
+      <%= form.label :password_confirmation %>
+      <%= form.password_field :password_confirmation %>
+    </div>
+
+    <div class="field">
+      <%= form.label :role %>
+      <%= form.text_field :role %>
+    </div>
+
+    <div class="field">
+      <%= form.label :library %>
+      <%= form.text_field :library %>
+    </div>
+
+    <div class="field">
+      <%= form.label :fine %>
+      <%= form.text_field :fine %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit %>
+    </div>
+  <%end %><%end %>
+
+  <%if current_user.role=='librarian' %>
+    <h2>Hi, Librarian</h2>
+    <%= form_with(model: @user, local: true) do |form| %>
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <% current_user==nil %>
+      <div class="field">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </div>
+
+      <div class="field">
+        <%= form.label :email %>
+        <%= form.text_field :email %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password %>
+        <%= form.password_field :password %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password_confirmation %>
+        <%= form.password_field :password_confirmation %>
+      </div>
+
+      <div class="field">
+        <%= form.label :library %>
+        <%= form.text_field :library %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <%end %><%end %>
+
+  <%if current_user.role=='student' %>
+    <h2>Hi, Student</h2>
+    <%= form_with(model: @user, local: true) do |form| %>
+      <% if @user.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+          <ul>
+            <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <% current_user==nil %>
+      <div class="field">
+        <%= form.label :name %>
+        <%= form.text_field :name %>
+      </div>
+
+      <div class="field">
+        <%= form.label :email %>
+        <%= form.text_field :email %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password %>
+        <%= form.password_field :password %>
+      </div>
+
+      <div class="field">
+        <%= form.label :password_confirmation %>
+        <%= form.password_field :password_confirmation %>
+      </div>
+
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+    <%end %><%end %>
 <%= link_to 'Show', @user %> |
 <%= link_to 'Back', users_path %>

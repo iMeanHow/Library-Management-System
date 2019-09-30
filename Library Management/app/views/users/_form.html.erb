@@ -10,6 +10,11 @@
       </ul>
     </div>
   <% end %>
+<% current_user==nil %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
 
   <div class="field">
     <%= form.label :email %>
@@ -25,6 +30,8 @@
     <%= form.label :password_confirmation %>
     <%= form.password_field :password_confirmation %>
   </div>
+
+
 
   <div class="actions">
     <%= form.submit %>

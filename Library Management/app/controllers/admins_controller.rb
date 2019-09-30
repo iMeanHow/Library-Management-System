@@ -1,6 +1,6 @@
 class AdminsController < ApplicationController
   before_action :set_admin, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify
   # GET /admins
   # GET /admins.json
   def index
@@ -10,6 +10,7 @@ class AdminsController < ApplicationController
   # GET /admins/1
   # GET /admins/1.json
   def show
+    @admin = Admin.find(params[:id])
   end
 
   # GET /admins/new
@@ -19,6 +20,7 @@ class AdminsController < ApplicationController
 
   # GET /admins/1/edit
   def edit
+    @admin = Admin.find(params[:id])
   end
 
   # POST /admins

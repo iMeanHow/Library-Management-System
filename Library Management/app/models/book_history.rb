@@ -1,9 +1,10 @@
 class BookHistory < ApplicationRecord
-  validates :time, presence: true
-  # validates :overdue_fine, presence: true
+  validates :borrow_time, presence: true
+  validates :return_time, presence: false
+  validates :overdue_fine, presence: false
   validates :book_title, presence: true
-  validates :book_ISBN, presence: true
+  validates :book_isbn, presence: true
   validates :student_name, presence: true
   validates :student_email, presence: true
-  validates :is_returned, exclusion: { in: [true, false] }, presence: true
+  validates :is_returned, presence: false
 end

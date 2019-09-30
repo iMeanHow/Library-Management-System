@@ -1,6 +1,6 @@
 class BookRequestsController < ApplicationController
   before_action :set_book_request, only: [:show, :edit, :update, :destroy]
-
+  before_action :verify
   # GET /book_requests
   # GET /book_requests.json
   def index
@@ -69,6 +69,6 @@ class BookRequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_request_params
-      params.fetch(:book_request, {})
+      params.require(:book_request).permit(:is_delete,:is_accomplished,:book_title,:book_isbn,:student_name,:student_email)
     end
 end

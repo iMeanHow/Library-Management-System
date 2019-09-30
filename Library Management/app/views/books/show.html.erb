@@ -1,4 +1,36 @@
 <p id="notice"><%= notice %></p>
+<% if current_user %>
 
-<%= link_to 'Edit', edit_book_path(@book) %> |
+  Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
+  <%= link_to "Log Out", logout_path %><br>
+  <%= link_to "Home", root_url %><br><br>
+<%else %>
+  <%= link_to "Sign Up", signup_path %> or
+  <%= link_to "Log In", login_path %><br><br>
+<% end %>
+<tr>
+<td>Title :<%= @book.title %></td><br>
+<td>ISBN: <%= @book.isbn %></td><br>
+<td>Authors: <%= @book.authors %></td><br>
+<td>Summary: <%= @book.summary %></td><br>
+<td>Edition: <%= @book.edition %></td><br>
+<td>Language: <%= @book.language %></td><br>
+<td>Published Time: <%= @book.published_time %></td><br>
+<td>Subject: <%= @book.subject %></td><br>
+  <td>Nums_total: <%= @book.nums_total %></td><br>
+  <td>Nums_left: <%= @book.nums_total-@book.nums_borrowed %></td><br>
+  <br>
+<%= image_tag @book.image.url %>
+<%= image_tag @book.image.url(:medium) %>
+<%= image_tag @book.image.url(:thumb) %></tr><br><br>
+<%#= link_to 'Edit', edit_book_path(@book) %>
+<%if @book.nums_borrowed>=@book.nums_total %>
+  <%= link_to 'Request', request_book_path(@book) %>
+
+  <%#= link_to 'Return', return_book_path(@book) %>
+<%else %>
+  <%= link_to 'Borrow', borrow_book_path(@book) %>
+<%end %>
+
+
 <%= link_to 'Back', books_path %>
