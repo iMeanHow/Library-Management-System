@@ -69,6 +69,6 @@ class BookRequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_request_params
-      params.require(:book_request).permit(:is_delete,:is_accomplished,:book_title,:book_isbn,:student_name,:student_email)
+      params.require(:book_request).permit(:is_delete,:is_accomplished,:book_title,:book_isbn,:student_name,:student_email,:library)
     end
 end

@@ -1,7 +1,7 @@
 class LibrariesController < ApplicationController
   before_action :set_library, only: [:show, :edit, :update, :destroy]
   before_action :verify
-  before_action :is_authorize
+  # before_action :is_authorize
   # GET /libraries
   # GET /libraries.json
   def is_authorize
@@ -20,16 +20,19 @@ class LibrariesController < ApplicationController
 
   # GET /libraries/new
   def new
+    is_authorize
     @library = Library.new
   end
 
   # GET /libraries/1/edit
   def edit
+
   end
 
   # POST /libraries
   # POST /libraries.json
   def create
+    is_authorize
     @library = Library.new(library_params)
 
     respond_to do |format|
@@ -75,6 +78,6 @@ class LibrariesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def library_params
-      params.require(:user).permit(:name,:location,:max_borrow,:overdue_fine,:university)
+      params.require(:library).permit(:name,:location,:max_borrow,:overdue_fine,:university)
     end
 end

@@ -1,5 +1,5 @@
 class Library < ApplicationRecord
-  has_many :books
+  # has_many :books
   validates :university, presence: true
   validates :name, uniqueness: true, presence: true
   validates :location, presence: true

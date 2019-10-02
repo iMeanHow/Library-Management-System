@@ -12,7 +12,7 @@ class BooksController < ApplicationController
     @book_history.student_name=current_user.name
     @book_history.student_email=current_user.email
     @book_history.is_returned=false
-
+    @book_history.library=@book.library
     respond_to do |format|
       if @book.save && @book_history.save
         # redirect_to @book, notice: 'Book was successfully borrowed.'
@@ -33,14 +33,12 @@ class BooksController < ApplicationController
     @book=Book.find(params[:id])
     @book_request=BookRequest.new
     @book_request.book_title=@book.title
-    puts "==========================="
-    puts @book_request.book_title
     @book_request.book_isbn=@book.isbn
     @book_request.student_name=current_user.name
     @book_request.student_email=current_user.email
     @book_request.is_delete = false
     @book_request.is_accomplished = false
-
+    @book_request.library=@book.library
     respond_to do |format|
       if @book_request.save
         format.html { redirect_to book_requests_path, notice: 'Book was successfully requested.' }
@@ -73,6 +71,7 @@ class BooksController < ApplicationController
   # GET /books/new
   def new
     @book = Book.new
+    @library=Library.all
   end
 
   # GET /books/1/edit

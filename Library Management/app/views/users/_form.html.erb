@@ -18,7 +18,7 @@
 
   <div class="field">
     <%= form.label :email %>
-    <%= form.text_field :email %>
+    <%= form.email_field :email %>
   </div>
 
   <div class="field">
@@ -31,7 +31,9 @@
     <%= form.password_field :password_confirmation %>
   </div>
 
-
+  <div class="field">
+    <%= form.select :role, %w(student librarian)%>
+  </div>
 
   <div class="actions">
     <%= form.submit %>

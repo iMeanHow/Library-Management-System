@@ -1,4 +1,19 @@
 <p id="notice"><%= notice %></p>
+<% if current_user %>
 
+  Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
+  <%= link_to "Log Out", logout_path %><br>
+  <%= link_to "Home", root_url %><br><br>
+<%else %>
+  <%= link_to "Sign Up", signup_path %> or
+  <%= link_to "Log In", login_path %><br><br>
+<% end %>
+<td>Name :<%= @library.name %></td><br>
+<td>University: <%= @library.university %></td><br>
+<td>Location: <%= @library.location %></td><br>
+<td>Max Borrow days: <%= @library.max_borrow %></td><br>
+<td>Overdue Fine: <%= @library.overdue_fine %></td><br>
+<%if current_user.role=="admin" ||(current_user.role=='librarian'&& current_user.library==@library.name)%>
 <%= link_to 'Edit', edit_library_path(@library) %> |
+  <%end %>
 <%= link_to 'Back', libraries_path %>

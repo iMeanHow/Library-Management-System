@@ -1,5 +1,5 @@
 class BookHistoriesController < ApplicationController
-  before_action :set_book_history, only: [:show, :edit, :update, :destroy]
+  before_action :set_book_history, only: [:show, :edit, :update, :destroy,:book_return]
   before_action :verify
   # GET /book_histories
   # GET /book_histories.json
@@ -24,6 +24,24 @@ class BookHistoriesController < ApplicationController
   def edit
   end
 
+  def book_return
+      @user=current_user
+      @user.borrow_num=@user.borrow_num-1
+      @book=Book.find_by(isbn: @book_history.book_isbn)
+      @book.nums_borrowed=@book.nums_borrowed-1
+      @book_history.is_returned=true
+      # update request list here
+      #
+      respond_to do |format|
+        if @book_history.save && @book.save && @user.save
+          format.html { redirect_to @book_history, notice: 'Book was successfully returned.' }
+          format.json { render :show, location: @book_history }
+        else
+          format.html { redirect_to @book_history, notice: 'Book return failed.' }
+          format.json { render :show, location: @book_history }
+        end
+      end
+  end
   # POST /book_histories
   # POST /book_histories.json
   def create
@@ -72,6 +90,6 @@ class BookHistoriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def book_history_params
-      params.require(:book_history).permit(:borrow_time,:return_time,:overdue_fine,:book_title,:book_isbn,:student_name,:student_email)
+      params.require(:book_history).permit(:borrow_time,:return_time,:overdue_fine,:book_title,:book_isbn,:student_name,:student_email,:library)
     end
 end

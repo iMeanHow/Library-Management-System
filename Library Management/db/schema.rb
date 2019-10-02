@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_29_022019) do
+ActiveRecord::Schema.define(version: 2019_10_02_000536) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 2019_09_29_022019) do
     t.time "return_time"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "library"
   end
 
   create_table "book_requests", force: :cascade do |t|
@@ -43,6 +44,7 @@ ActiveRecord::Schema.define(version: 2019_09_29_022019) do
     t.string "student_email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "library"
   end
 
   create_table "book_searches", force: :cascade do |t|
@@ -93,6 +95,7 @@ ActiveRecord::Schema.define(version: 2019_09_29_022019) do
     t.integer "overdue_fine"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "university"
   end
 
   create_table "students", force: :cascade do |t|
@@ -109,6 +112,9 @@ ActiveRecord::Schema.define(version: 2019_09_29_022019) do
     t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "education_level"
+    t.integer "borrow_num"
+    t.boolean "librariansrequest"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

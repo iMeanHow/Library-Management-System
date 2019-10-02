@@ -1,25 +1,48 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Libraries</h1>
+<% if current_user %>
 
+  Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
+  <%= link_to "Log Out", logout_path %><br>
+  <%= link_to "Home", root_url %><br><br>
+<%else %>
+  <%= link_to "Sign Up", signup_path %> or
+  <%= link_to "Log In", login_path %><br><br>
+<% end %>
 <table>
   <thead>
-    <tr>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>University</th>
+    <th>Location</th>
+    <th>Overdue Fine</th>
+    <th>Max Borrow Number</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
     <% @libraries.each do |library| %>
       <tr>
+        <td><%= library.name %></td>
+        <td><%= library.university %></td>
+        <td><%= library.location %></td>
+        <td><%= library.overdue_fine %></td>
+        <td><%= library.max_borrow %></td>
         <td><%= link_to 'Show', library %></td>
-        <td><%= link_to 'Edit', edit_library_path(library) %></td>
-        <td><%= link_to 'Destroy', library, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <%if current_user.role=='admin' || current_user.library==library.name %>
+          <td><%= link_to 'Edit', edit_library_path(library) %></td>
+        <%end %>
+        <%if current_user.role=='admin' %>
+         <td><%= link_to 'Destroy', library, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <%end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
-
-<%= link_to 'New Library', new_library_path %>
+<%if current_user.role=='admin'%>
+    <%= link_to 'New Library', new_library_path %>
+<%end %>

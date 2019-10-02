@@ -1,16 +1,27 @@
 <h1>iWolf Library</h1>
 <p>Think & Do</p>
-
+<p id="notice"><%= notice %></p>
 <% if current_user %>
-
   Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
   <%= link_to "Log Out", logout_path %><br>
-  <%= link_to "Book List", books_path %><br>
-  <%= link_to "User Center", user_path(current_user) %><br>
-  <%= link_to "View Requests", book_requests_path %><br>
-  <%= link_to "View History", book_histories_path %><br>
-  <%= link_to "View Libraries", libraries_path %><br>
-  <%else %>
+  <% if current_user.librariansrequest == true %>
+    <b>please wait for admin's approve</b><br>
+  <% else %>
+    <% if current_user.role == "admin" %>
+      <b>this is admin area</b><br>
+      <%= link_to "View Librarian Requests", librarian_requests_path %><br>
+    <% end %>
+    <% if current_user.role == "librarian" || current_user.role == "admin" %>
+
+      <%= link_to "View Requests", book_requests_path %><br>
+
+    <% end %>
+    <%= link_to "Book Return Management", book_histories_path %><br>
+    <%= link_to "Book List", books_path %><br>
+    <%= link_to "User Center", user_path(current_user) %><br>
+    <%= link_to "View Libraries", libraries_path %><br>
+  <% end %>
+<% else %>
   <%= link_to "Sign Up", signup_path %> or
   <%= link_to "Log In", login_path %>
 <% end %>

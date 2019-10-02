@@ -10,8 +10,33 @@
       </ul>
     </div>
   <% end %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :university %>
+    <%= form.text_field :university %>
+  </div>
+
+  <div class="field">
+    <%= form.label :location %>
+    <%= form.text_field :location %>
+  </div>
+
+  <div class="field">
+    <%= form.label :max_borrow_days %>
+    <%= form.text_field :max_borrow %>
+  </div>
+
+  <div class="field">
+    <%= form.label :overdue_fine %>
+    <%= form.text_field :overdue_fine %>
+  </div>
 
   <div class="actions">
     <%= form.submit %>
   </div>
+
 <% end %>
