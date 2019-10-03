@@ -11,7 +11,7 @@
 <tr>
 <td>Title :<%= @book.title %></td><br>
 <td>ISBN: <%= @book.isbn %></td><br>
-<td>Authors: <%= @book.authors %></td><br>
+<td>Authors: <%= @book.author %></td><br>
 <td>Summary: <%= @book.summary %></td><br>
 <td>Edition: <%= @book.edition %></td><br>
 <td>Language: <%= @book.language %></td><br>
@@ -23,11 +23,11 @@
 <%= image_tag @book.image.url %>
 <%= image_tag @book.image.url(:medium) %>
 <%= image_tag @book.image.url(:thumb) %></tr><br><br>
-<%#= link_to 'Edit', edit_book_path(@book) %>
-<%if @book.nums_borrowed>=@book.nums_total %>
+<%if current_user.role=='admin' || current_user.library==@book.library %>
+<%= link_to 'Edit', edit_book_path(@book) %>
+  <%end %>
+<%if @book.is_special == 'true' %>
   <%= link_to 'Request', request_book_path(@book) %>
-
-  <%#= link_to 'Return', return_book_path(@book) %>
 <%else %>
   <%= link_to 'Borrow', borrow_book_path(@book) %>
 <%end %>

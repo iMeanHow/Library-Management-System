@@ -7,8 +7,8 @@ class UsersController < ApplicationController
     if (current_user.role == 'admin')
       @userlist = User.all
     elsif (current_user.role == 'librarian')
-      # @userlist = User.find_by_sql("select * from users where role='student'")
-      @userlist = User.find_by_sql("select * from users")
+      @userlist = User.find_by_sql("select * from users where role='student'")
+      #@userlist = User.find_by_sql("select * from users")
     elsif (current_user.role == 'student')
       @user = User.find_by(:email => current_user.email)
     end
@@ -40,6 +40,7 @@ class UsersController < ApplicationController
     if @user.email=="admin@test.com"
       @user.role="admin"
     end
+    @user.borrow_num = 0
     respond_to do |format|
       if @user.save
         session[:user_id] = @user.id
@@ -74,6 +75,18 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def viewrequests
+    @librariansNeedtoApprove = User.find_by_sql("select * from users where librariansrequest = 'true'")
+  end
+
+  def approvelibrarian()
+    print(params[:email])
+    @needtoapprove = User.find_by_email(params[:email])
+    @needtoapprove.librariansrequest= false
+    @needtoapprove.save
+    redirect_to librarian_requests_path, notice: 'Approved!'
   end
 
   private

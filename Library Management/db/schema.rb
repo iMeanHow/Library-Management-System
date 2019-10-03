@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_02_000536) do
+ActiveRecord::Schema.define(version: 2019_10_03_001452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2019_10_02_000536) do
   create_table "books", force: :cascade do |t|
     t.string "title"
     t.string "isbn"
-    t.string "authors"
+    t.string "author"
     t.string "language"
     t.string "edition"
     t.string "published_time"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2019_10_02_000536) do
     t.string "image_content_type"
     t.integer "image_file_size"
     t.datetime "image_updated_at"
+    t.string "library"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -112,9 +113,9 @@ ActiveRecord::Schema.define(version: 2019_10_02_000536) do
     t.string "role"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "librariansrequest"
     t.string "education_level"
     t.integer "borrow_num"
-    t.boolean "librariansrequest"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

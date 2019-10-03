@@ -13,8 +13,8 @@
 <td>Student: <%= @book_history.student_name %></td><br>
 <td>Email: <%= @book_history.student_email  %></td><br>
 <td>Is Returned: <%= @book_history.is_returned %></td><br>
-<%if current_user.email==book_history.student_email && book_history.is_returned==false %>
-  <td><%= link_to 'book_return', book_history %></td>
+<%if current_user.email==@book_history.student_email && @book_history.is_returned==false %>
+  <td><%= link_to 'return this book', book_return_path(@book_history) %></td>
 <%end %>
 <!--<%#= link_to 'Edit', edit_book_history_path(@book_history) %> |-->
 <%= link_to 'Back', book_histories_path %>

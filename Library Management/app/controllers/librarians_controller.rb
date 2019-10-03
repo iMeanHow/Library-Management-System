@@ -61,9 +61,6 @@ class LibrariansController < ApplicationController
     end
   end
 
-  def viewrequests
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_librarian

@@ -6,6 +6,10 @@
   <%= link_to "Log Out", logout_path %><br>
   <% if current_user.librariansrequest == true %>
     <b>please wait for admin's approve</b><br>
+    <%= link_to "Book Return Management", book_histories_path %><br>
+    <%= link_to "Book List", books_path %><br>
+    <%= link_to "User Center", user_path(current_user) %><br>
+    <%= link_to "View Libraries", libraries_path %><br>
   <% else %>
     <% if current_user.role == "admin" %>
       <b>this is admin area</b><br>
@@ -13,12 +17,12 @@
     <% end %>
     <% if current_user.role == "librarian" || current_user.role == "admin" %>
 
-      <%= link_to "View Requests", book_requests_path %><br>
+      <%= link_to "View Book Borrow Requests", book_requests_path %><br>
 
     <% end %>
     <%= link_to "Book Return Management", book_histories_path %><br>
     <%= link_to "Book List", books_path %><br>
-    <%= link_to "User Center", user_path(current_user) %><br>
+    <%= link_to "User Management", users_path %><br>
     <%= link_to "View Libraries", libraries_path %><br>
   <% end %>
 <% else %>
@@ -26,3 +30,11 @@
   <%= link_to "Log In", login_path %>
 <% end %>
 <p id=”notice”><%= notice %></p>
+
+<br><br><br>
+
+<b>Hint: </b><br>
+<b>Admin email:    admin@test.com</b><br>
+<b>Admin password: 123</b>
+<br><br><br>
+<b>Versin 1.0</b>

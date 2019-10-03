@@ -32,6 +32,11 @@
   </div>
 
   <div class="field">
+    <%= form.label :education_level %>
+    <%= form.select :education_level, %w(undergraduate master phd) %>
+  </div>
+
+  <div class="field">
     <%= form.select :role, %w(student librarian)%>
   </div>
 

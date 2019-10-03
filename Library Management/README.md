@@ -1,24 +1,35 @@
-# README
+# Version 1.0
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Version 1.0 has been runnig on https://iwolflibrary.herokuapp.com/
 
-Things you may want to cover:
+===================================================================
 
-* Ruby version
+Things have been down:
 
-* System dependencies
+* Login Control and unauthorized actions will be redirect 
 
-* Configuration
+* Admin Management to students, librarians(whether approve), books and libraries.
 
-* Database creation
+* Librarian's management to library
 
-* Database initialization
+* Student view, search, borrow and return books
 
-* How to run the test suite
+* Book search（fuzzy search supported)
 
-* Services (job queues, cache servers, search engines, etc.)
+* Book has informatin with images 
 
-* Deployment instructions
+* Student/Librarian's self-management
 
-* ...
+* Book and librarian are hooked with libraries
+
+=================================================================
+
+Things need to be down:
+
+* Book request
+
+* Overdue fine calculation
+
+* Email notification
+
+* Edge situations

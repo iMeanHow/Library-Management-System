@@ -22,8 +22,8 @@
     <%= form.text_field :isbn %>
   </div>
   <div class="field">
-    <%= form.label :authors %><br>
-    <%= form.text_field :authors %>
+    <%= form.label :author %><br>
+    <%= form.text_field :author %>
   </div>
   <div class="field">
     <%= form.label :language %><br>
@@ -34,16 +34,20 @@
     <%= form.text_field :edition %>
   </div>
   <div class="field">
-  <%= form.label :published_time %><br>
-  <%= form.text_field :published_time %>
+    <%= form.label :published_time %><br>
+    <%= form.text_field :published_time %>
   </div>
   <div class="field">
     <%= form.label :subject %><br>
     <%= form.text_field :subject %>
   </div>
   <div class="field">
+    <%= form.label :is_special %><br>
+    <%= form.select :is_special, %w(false true) %>
+  </div>
+  <div class="field">
     <%= form.label :summary %><br>
-  <%= form.text_field :summary %>
+    <%= form.text_field :summary %>
   </div>
   <div class="field">
     <%= form.label :nums_total %><br>
@@ -54,10 +58,12 @@
     <%= form.file_field :image %>
   </div>
 
-  <div class="field">
-    <%= form.label :library %><br>
-    <%= form.select :library, options_for_select(@library.all.collect {|a| [a.name, a.university]}) -%>
-  </div>
+  <% if current_user.role == 'admin' %>
+    <div class="field">
+      <%= form.label :library %><br>
+      <%= form.select :library, options_for_select(Library.all.collect { |a| [a.name] }) %>
+    </div>
+  <% end %>
   <div class="actions">
     <%= form.submit %>
   </div>

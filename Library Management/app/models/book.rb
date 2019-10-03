@@ -10,7 +10,7 @@ class Book < ApplicationRecord
   # validates :borrowed, presence: false
   validates :isbn, uniqueness: true, presence: true
   validates :title, presence: true
-  validates :authors, presence: false
+  validates :author, presence: false
   validates :language, presence: false
   validates :edition, presence: false
   validates :published_time, presence: false

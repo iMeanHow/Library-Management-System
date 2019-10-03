@@ -26,17 +26,21 @@ class BookHistoriesController < ApplicationController
 
   def book_return
       @user=current_user
-      @user.borrow_num=@user.borrow_num-1
+      @user.borrow_num=@user.borrow_num - 1
       @book=Book.find_by(isbn: @book_history.book_isbn)
-      @book.nums_borrowed=@book.nums_borrowed-1
+      puts "==========================="
+      puts @book.nums_borrowed
+      @book.nums_borrowed=@book.nums_borrowed - 1
       @book_history.is_returned=true
       # update request list here
       #
       respond_to do |format|
         if @book_history.save && @book.save && @user.save
+          puts "==========================="
           format.html { redirect_to @book_history, notice: 'Book was successfully returned.' }
           format.json { render :show, location: @book_history }
         else
+          puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
           format.html { redirect_to @book_history, notice: 'Book return failed.' }
           format.json { render :show, location: @book_history }
         end
