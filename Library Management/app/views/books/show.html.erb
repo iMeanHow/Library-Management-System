@@ -29,8 +29,11 @@
 <%if @book.is_special == 'true' %>
   <%= link_to 'Request', request_book_path(@book) %>
 <%else %>
-  <%= link_to 'Borrow', borrow_book_path(@book) %>
+
 <%end %>
-
-
+<% if BookMark.find_by_student_email_and_book_isbn(current_user.email,@book.isbn)== nil %>
+  <%= link_to 'Mark', mark_book_path(@book) %>
+<%else %>
+  <%= link_to 'Unmark',unmark_book_path(@book)  %>
+<%end %>
 <%= link_to 'Back', books_path %>

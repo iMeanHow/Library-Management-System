@@ -10,6 +10,7 @@
     <%= link_to "Book List", books_path %><br>
     <%= link_to "User Center", user_path(current_user) %><br>
     <%= link_to "View Libraries", libraries_path %><br>
+    <%= link_to "View My Book Marks", book_marks_path %><br>
   <% else %>
     <% if current_user.role == "admin" %>
       <b>this is admin area</b><br>
@@ -24,6 +25,7 @@
     <%= link_to "Book List", books_path %><br>
     <%= link_to "User Management", users_path %><br>
     <%= link_to "View Libraries", libraries_path %><br>
+    <%= link_to "View My Book Marks", book_marks_path %><br>
   <% end %>
 <% else %>
   <%= link_to "Sign Up", signup_path %> or
@@ -37,4 +39,4 @@
 <b>Admin email:    admin@test.com</b><br>
 <b>Admin password: 123</b>
 <br><br><br>
-<b>Versin 1.0</b>
+<b>Versin 1.1</b>

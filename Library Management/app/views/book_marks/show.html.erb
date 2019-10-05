@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Book isbn:</strong>
+  <%= @book_mark.book_isbn %>
+</p>
+
+<p>
+  <strong>Book title:</strong>
+  <%= @book_mark.book_title %>
+</p>
+
+<p>
+  <strong>Student name:</strong>
+  <%= @book_mark.student_name %>
+</p>
+
+<p>
+  <strong>Student email:</strong>
+  <%= @book_mark.student_email %>
+</p>
+
+<%= link_to 'Edit', edit_book_mark_path(@book_mark) %> |
+<%= link_to 'Back', book_marks_path %>

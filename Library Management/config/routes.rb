@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :book_marks
   resources :book_requests
   resources :book_histories
   resources :users
@@ -22,6 +23,8 @@ Rails.application.routes.draw do
   get 'searchreult', to: 'books#booksearch', as: 'book_search'
   get 'approve', to: 'users#approvelibrarian', as: 'approve_librarian_requests'
   get 'books/:id/borrow', to: 'books#borrow', as: 'borrow_book'
+  get 'books/:id/mark_book', to: 'books#mark_book', as: 'mark_book'
+  get 'books/:id/unmark_book', to: 'books#unmark_book', as: 'unmark_book'
   get 'books/:id/book_request', to: 'books#book_request', as: 'request_book'
   get 'book_histories/:id/book_return', to: 'book_histories#book_return', as: 'book_return'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

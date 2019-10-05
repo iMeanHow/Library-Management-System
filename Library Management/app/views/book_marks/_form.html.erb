@@ -1,0 +1,37 @@
+<%= form_with(model: book_mark, local: true) do |form| %>
+  <% if book_mark.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(book_mark.errors.count, "error") %> prohibited this book_mark from being saved:</h2>
+
+      <ul>
+        <% book_mark.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :book_isbn %>
+    <%= form.text_field :book_isbn %>
+  </div>
+
+  <div class="field">
+    <%= form.label :book_title %>
+    <%= form.text_field :book_title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :student_name %>
+    <%= form.text_field :student_name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :student_email %>
+    <%= form.text_field :student_email %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
