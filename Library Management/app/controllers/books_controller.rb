@@ -1,14 +1,14 @@
 class BooksController < ApplicationController
   before_action :verify
-  before_action :set_book, only: [:show, :edit, :update, :destroy, :borrow, :book_request, :mark_book,:unmark_book]
+  before_action :set_book, only: [:show, :edit, :update, :destroy, :borrow, :book_request, :mark_book, :unmark_book]
 
   def mark_book
-    @book=Book.find(params[:id])
-    @book_mark=BookMark.new
-    @book_mark.book_title=@book.title
-    @book_mark.book_isbn=@book.isbn
-    @book_mark.student_email=current_user.email
-    @book_mark.student_name=current_user.name
+    @book = Book.find(params[:id])
+    @book_mark = BookMark.new
+    @book_mark.book_title = @book.title
+    @book_mark.book_isbn = @book.isbn
+    @book_mark.student_email = current_user.email
+    @book_mark.student_name = current_user.name
     respond_to do |format|
       if @book_mark.save
         # redirect_to @book, notice: 'Book was successfully borrowed.'
@@ -23,11 +23,12 @@ class BooksController < ApplicationController
       end
     end
   end
+
   def unmark_book
     @book = Book.find(params[:id])
     puts "============================================"
-    puts BookMark.find_by_book_isbn_and_student_email(@book.isbn,current_user.email)
-    @book_mark=BookMark.find_by_book_isbn_and_student_email(@book.isbn,current_user.email)
+    puts BookMark.find_by_book_isbn_and_student_email(@book.isbn, current_user.email)
+    @book_mark = BookMark.find_by_book_isbn_and_student_email(@book.isbn, current_user.email)
 
     respond_to do |format|
       if @book_mark.destroy
@@ -43,46 +44,65 @@ class BooksController < ApplicationController
       end
     end
   end
-  def borrow
-    @book = Book.find(params[:id])
-    #redirect_to book_request if @book.is_special == 'true'
 
-    if(current_user.education_level=='undergraduate')
-      max=2
+  def borrow_without_check_2
+    user = User.find_by_email(params[:email])
+    book = Book.find_by_isbn(params[:isbn])
+    borrow_without_check(user, book)
+  end
+
+  def borrow_without_check(user, book)
+    if (user.education_level == 'undergraduate')
+      max = 2
     end
-    if(current_user.education_level=='master')
-      max=4
+    if (user.education_level == 'master')
+      max = 4
     end
-    if(current_user.education_level=='phd')
-      max=6
+    if (user.education_level == 'phd')
+      max = 6
     end
-    if(current_user.borrow_num<max||current_user.role=='admin')
-    @book.nums_borrowed = @book.nums_borrowed + 1
-    @book_history = BookHistory.new
-    @book_history.borrow_time = Time.now
-    @book_history.book_isbn = @book.isbn
-    @book_history.book_title = @book.title
-    @book_history.student_name = current_user.name
-    @book_history.student_email = current_user.email
-    @book_history.is_returned = false
-    @book_history.library = @book.library
-    respond_to do |format|
-      if @book.save && @book_history.save
-        # redirect_to @book, notice: 'Book was successfully borrowed.'
-        # render :show, status: :ok, location: @book,alert: 'Book was successfully borrowed.'
-        format.html { redirect_to @book, notice: 'Book was successfully borrowed.' }
-        format.json { render :show, status: :ok, location: @book }
-      else
-        # render :show
-        format.html { render :edit }
-        format.json { render json: @book.errors, status: :unprocessable_entity }
-        # render json: @book.errors, status: :unprocessable_entity
+    if (user.borrow_num < max || user.role == 'admin')
+      book.nums_borrowed = book.nums_borrowed + 1
+      user.borrow_num += 1
+      user.save
+      @book_history = BookHistory.new
+      @book_history.borrow_time = Time.now
+      @book_history.book_isbn = book.isbn
+      @book_history.book_title = book.title
+      @book_history.student_name = user.name
+      @book_history.student_email = user.email
+      @book_history.is_returned = false
+      @book_history.library = book.library
+      respond_to do |format|
+        if book.save && @book_history.save
+          # redirect_to @book, notice: 'Book was successfully borrowed.'
+          # render :show, status: :ok, location: @book,alert: 'Book was successfully borrowed.'
+          format.html { redirect_to book, notice: 'Book was successfully borrowed.' }
+          format.json { render :show, status: :ok, location: book }
+        else
+          # render :show
+          format.html { render :edit }
+          format.json { render json: book.errors, status: :unprocessable_entity }
+          # render json: @book.errors, status: :unprocessable_entity
+        end
       end
-    end
 
     else
-      redirect_to @book, notice: 'Failed! You have reached max borrow number already.'
+      redirect_to book, notice: 'Failed! You have reached max borrow number already.'
     end
+  end
+
+  def borrow
+    @book = Book.find(params[:id])
+
+    if (@book.is_special == true)
+      book_request
+      return
+    else
+      borrow_without_check(current_user, @book)
+    end
+
+
   end
 
   def book_request
@@ -104,7 +124,6 @@ class BooksController < ApplicationController
         # # render :show
         format.html { redirect_to book_requests_path, notice: 'Requeste Failed.' }
         format.json { render json: @book_request.errors, status: :unprocessable_entity }
-
       end
     end
   end

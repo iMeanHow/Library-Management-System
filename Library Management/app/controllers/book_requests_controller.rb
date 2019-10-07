@@ -1,6 +1,26 @@
 class BookRequestsController < ApplicationController
   before_action :set_book_request, only: [:show, :edit, :update, :destroy]
   before_action :verify
+
+  def approve
+    email = params[:email]
+    isbn = params[:isbn]
+    id = params[:id]
+    bookrequest = BookRequest.find(id)
+    bookrequest.is_accomplished = true
+    bookrequest.save
+    redirect_to borrow_book_without_check_path(email: email, isbn: isbn)
+  end
+
+  def deny
+    id = params[:id]
+    bookrequest = BookRequest.find(id)
+    bookrequest.is_accomplished = true
+    bookrequest.save
+    redirect_to book_requests_path
+  end
+
+
   # GET /book_requests
   # GET /book_requests.json
   def index
@@ -62,13 +82,14 @@ class BookRequestsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_book_request
-      @book_request = BookRequest.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def book_request_params
-      params.require(:book_request).permit(:is_delete,:is_accomplished,:book_title,:book_isbn,:student_name,:student_email,:library)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_book_request
+    @book_request = BookRequest.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def book_request_params
+    params.require(:book_request).permit(:is_delete, :is_accomplished, :book_title, :book_isbn, :student_name, :student_email, :library)
+  end
 end
