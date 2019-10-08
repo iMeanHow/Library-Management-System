@@ -26,7 +26,7 @@ class BooksController < ApplicationController
 
   def unmark_book
     @book = Book.find(params[:id])
-    puts "============================================"
+    # puts "============================================"
     puts BookMark.find_by_book_isbn_and_student_email(@book.isbn, current_user.email)
     @book_mark = BookMark.find_by_book_isbn_and_student_email(@book.isbn, current_user.email)
 
@@ -88,43 +88,51 @@ class BooksController < ApplicationController
       end
 
     else
-      redirect_to book, notice: 'Failed! You have reached max borrow number already.'
+      redirect_to book, notice: 'Failed! Max borrow number reached already.'
     end
   end
 
   def borrow
     @book = Book.find(params[:id])
-
-    if (@book.is_special == true)
-      book_request
-      return
+    @library=Library.find_by_name(@book.library)
+    if((current_user.role=='librarian' && current_user.library==@library.name )||current_user.university==@library.university)
+      if (@book.is_special == true)
+        book_request
+        return
+      else
+        borrow_without_check(current_user, @book)
+      end
     else
-      borrow_without_check(current_user, @book)
+      redirect_to books_url, notice: 'Failed! Unauthorized action.'
     end
-
-
   end
 
   def book_request
     @book = Book.find(params[:id])
-    @book_request = BookRequest.new
-    @book_request.book_title = @book.title
-    @book_request.book_isbn = @book.isbn
-    @book_request.student_name = current_user.name
-    @book_request.student_email = current_user.email
-    @book_request.is_delete = false
-    @book_request.is_accomplished = false
-    @book_request.library = @book.library
-    respond_to do |format|
-      if @book_request.save
-        format.html { redirect_to book_requests_path, notice: 'Book was successfully requested.' }
-        format.json { render :show, status: :ok, location: @book }
+    @library=Library.find_by_name(@book.library)
+    if((current_user.role=='librarian' && current_user.library==@library.name )||current_user.university==@library.university)
+      @book = Book.find(params[:id])
+      @book_request = BookRequest.new
+      @book_request.book_title = @book.title
+      @book_request.book_isbn = @book.isbn
+      @book_request.student_name = current_user.name
+      @book_request.student_email = current_user.email
+      @book_request.is_delete = false
+      @book_request.is_accomplished = false
+      @book_request.library = @book.library
+      respond_to do |format|
+        if @book_request.save &&
+          format.html { redirect_to book_requests_path, notice: 'Book was successfully requested.' }
+          format.json { render :show, status: :ok, location: @book }
 
-      else
-        # # render :show
-        format.html { redirect_to book_requests_path, notice: 'Requeste Failed.' }
-        format.json { render json: @book_request.errors, status: :unprocessable_entity }
+        else
+          # # render :show
+          format.html { redirect_to book_requests_path, notice: 'Requeste Failed.' }
+          format.json { render json: @book_request.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to books_url, notice: 'Failed! Unauthorized action.'
     end
   end
 
@@ -160,11 +168,12 @@ class BooksController < ApplicationController
     @user = current_user
     if verify_admin || verify_librarian
       @book = Book.new(book_params)
-
+      @book.nums_request=0
       @book.library = @user.library if (@user.role == 'librarian')
       @book.is_delete = false
       @book.nums_borrowed = 0
-
+      @library=Library.find_by_name(@book.library)
+      @book.university=@library.university
       respond_to do |format|
         if @book.save
           format.html { redirect_to @book, notice: 'Book was successfully created.' }
@@ -182,7 +191,9 @@ class BooksController < ApplicationController
   # PATCH/PUT /books/1
   # PATCH/PUT /books/1.json
   def update
-    if verify_admin || (verify_librarian && current_user.library == @book.library)
+    if verify_admin || (verify_librarian && current_user.role == 'librarian' && current_user.library == @book.library )
+      @library=Library.find_by_name(@book.library)
+      @book.university=@library.university
       respond_to do |format|
         if @book.update(book_params)
           format.html { redirect_to @book, notice: 'Book was successfully updated.' }
@@ -203,7 +214,7 @@ class BooksController < ApplicationController
   def destroy
 
     @book = Book.find(params[:id])
-    if verify_admin || (verify_librarian && current_user.library == @book.library)
+    if verify_admin || (verify_librarian && current_user.role == 'librarian' && current_user.library == @book.library)
       @book.is_delete = true
       @book.save
       respond_to do |format|
@@ -231,6 +242,6 @@ class BooksController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def book_params
-    params.require(:book).permit(:image, :isbn, :title, :summary, :nums_total, :nums_borrowed, :is_special, :is_delete, :published_time, :subject, :language, :author, :edition, :library)
+    params.require(:book).permit(:image, :isbn, :title, :summary, :nums_total, :nums_borrowed, :is_special, :is_delete, :published_time, :subject, :language, :author, :edition, :library,:nums_request,:university)
   end
 end

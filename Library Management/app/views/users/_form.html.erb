@@ -39,7 +39,10 @@
   <div class="field">
     <%= form.select :role, %w(student librarian)%>
   </div>
-
+  <div class="field">
+    <%= form.select :university, %w(NCSU UNC DUKE)%>
+  </div>
+  <td>Once select to be librarian, select any universtiy does not matter since it won't limit librarian choosing place to work</td>
   <div class="actions">
     <%= form.submit %>
   </div>

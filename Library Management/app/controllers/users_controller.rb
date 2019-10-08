@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
+    overdue_calculator
     if (current_user.role == 'admin')
       @userlist = User.all
     elsif (current_user.role == 'librarian')
@@ -17,6 +18,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    overdue_calculator
   end
 
   # GET /users/new
@@ -26,6 +28,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+
   end
 
   # POST /users
@@ -70,6 +73,21 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
+    @bh=BookHistory.find_by_student_email(current_user.email)
+    @bh.each do |bh|
+      if(bh.is_returned==false)
+        @book=Book.find_by_isbn(bh.book_isbn)
+        @book.nums_total= @book.nums_total -1
+        @book.num_borrowed= @book.nums_borrowed -1
+        @book.save
+      end
+
+      bh.destroy
+    end
+    @bm=BookMark.find_by_student_email(current_user.email)
+    @bh.each do |bh|
+      @bm.destroy
+    end
     @user.destroy
     respond_to do |format|
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
@@ -98,6 +116,6 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:email, :name, :password, :password_confirmation, :role, :library, :fine, :borrow_num, :education_level,)
+    params.require(:user).permit(:email, :name, :password, :password_confirmation, :role, :library, :fine, :borrow_num, :education_level,:university)
   end
 end

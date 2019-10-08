@@ -22,7 +22,6 @@
         </ul>
       </div>
     <% end %>
-    <% current_user==nil %>
     <div class="field">
       <%= form.label :name %>
       <%= form.text_field :name %>
@@ -43,20 +42,7 @@
       <%= form.password_field :password_confirmation %>
     </div>
 
-    <div class="field">
-      <%= form.label :role %>
-      <%= form.text_field :role %>
-    </div>
 
-    <div class="field">
-      <%= form.label :library %>
-      <%= form.text_field :library %>
-    </div>
-
-    <div class="field">
-      <%= form.label :fine %>
-      <%= form.text_field :fine %>
-    </div>
 
     <div class="actions">
       <%= form.submit %>

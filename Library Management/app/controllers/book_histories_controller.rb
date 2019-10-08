@@ -33,7 +33,7 @@ class BookHistoriesController < ApplicationController
       @book.nums_borrowed=@book.nums_borrowed - 1
       @book_history.is_returned=true
       # update request list here
-      #
+
       respond_to do |format|
         if @book_history.save && @book.save && @user.save
           puts "==========================="

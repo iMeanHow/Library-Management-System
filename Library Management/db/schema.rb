@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_04_210509) do
+ActiveRecord::Schema.define(version: 2019_10_08_173746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 2019_10_04_210509) do
     t.integer "image_file_size"
     t.datetime "image_updated_at"
     t.string "library"
+    t.integer "nums_request"
+    t.string "university"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -125,6 +127,8 @@ ActiveRecord::Schema.define(version: 2019_10_04_210509) do
     t.boolean "librariansrequest"
     t.string "education_level"
     t.integer "borrow_num"
+    t.string "university"
+    t.integer "overdue"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

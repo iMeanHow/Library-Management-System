@@ -7,8 +7,9 @@ class User < ApplicationRecord
   validates :fine, presence: false
   validates :name, presence: true
   validates :max_borrow, presence: false
-  validates :education_level, presence: true
-  validates :borrow_num, presence: true
+  validates :education_level, presence: false
+  validates :borrow_num, presence: false
   # for request for librarian, false is student or complete request, true is requesting for permission
-  :librariansrequest
+  validates :librariansrequest, presence: false
+  validates :university, presence: false
 end

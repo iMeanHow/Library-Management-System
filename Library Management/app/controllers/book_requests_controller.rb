@@ -9,11 +9,18 @@ class BookRequestsController < ApplicationController
     bookrequest = BookRequest.find(id)
     bookrequest.is_accomplished = true
     bookrequest.save
+    @book=Book.find_by_isbn(isbn)
+    @book.nums_request=@book.nums_request-1
+    @book.save
     redirect_to borrow_book_without_check_path(email: email, isbn: isbn)
   end
 
   def deny
     id = params[:id]
+    isbn = params[:isbn]
+    @book=Book.find_by_isbn(isbn)
+    @book.nums_request=@book.nums_request-1
+    @book.save
     bookrequest = BookRequest.find(id)
     bookrequest.is_accomplished = true
     bookrequest.save

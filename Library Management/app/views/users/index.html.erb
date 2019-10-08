@@ -18,25 +18,67 @@
       <th>Email</th>
       <th>Name</th>
       <th>degree</th>
+      <th>Overdue Fine</th>
       <th colspan="3"></th>
     </tr>
     </thead>
   <tbody>
     <% @userlist.each do |user| %>
+    <%if current_user.role=='admin' %>
       <tr>
         <td><%= user.email %></td>
         <td><%= user.name %></td>
         <td><%= user.education_level %></td>
+        <td><%= user.fine %></td>
         <td><%= link_to 'Show', user %></td>
         <td><%= link_to 'Edit', edit_user_path(user) %></td>
         <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
 
     <%= link_to 'New User', new_user_path %>
+     <%else %>
+    <%n=0 %>
+
+      <%if user.fine>0 %>
+        <%@bh=BookHistory.find_by_sql('select * from book_histories where is_returned=false and student_email ='+current_user.email) %>
+        <%@bh.each do |bh| %>
+        <%if current_user.library==Book.find_by_isbn(bh.book_isbn).library %>
+          <%n=n+1 %>
+          <tr>
+            <td><%= user.email %></td>
+            <td><%= user.name %></td>
+            <td><%= user.education_level %></td>
+            <td><%= user.fine %></td>
+          </tr>
+        <%end %>
+      <%end %>
+      <%end %>
+      <%if n==0 %>
+      No overdue student<br>
+      <%end %>
     <% end %>
+    <%end %>
   </tbody>
 <%else %>
+
     <h2>Hi, <%= current_user.name %></h2>
+    <thead>
+    <tr>
+      <th>Email</th>
+      <th>Name</th>
+      <th>degree</th>
+      <th>Overdue Fine</th>
+      <th colspan="3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><%= current_user.email %></td>
+      <td><%= current_user.name %></td>
+      <td><%= current_user.education_level %></td>
+      <td><%= current_user.overdue_fine %></td>
+    </tr>
+    </tbody>
     <td><%= link_to 'Show My Profile', current_user %></td>
     <td><%= link_to 'Edit My Profile', edit_user_path(current_user) %></td>
 <%end %>

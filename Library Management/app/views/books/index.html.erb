@@ -23,6 +23,8 @@
   <tr>
     <th>Title</th>
     <th>ISBN</th>
+    <th>Library</th>
+    <th>Request Number</th>
     <th colspan="3"></th>
   </tr>
   </thead>
@@ -32,8 +34,10 @@
     <tr>
       <td><%= book.title %></td>
       <td><%= book.isbn %></td>
-
+      <td><%= book.library %></td>
+      <td><%= book.nums_request %></td>
       <td><%= link_to 'Show', book %></td>
+
       <% if current_user.role == 'admin' || (current_user.role == 'librarian' && current_user.library == book.library) %>
         <td><%= link_to 'Edit', edit_book_path(book) %></td>
 
@@ -41,8 +45,11 @@
       <% end %>
       <% if book.nums_borrowed >= book.nums_total %>
         <td> All Borrowed!</td>
+
       <% else %>
-        <td><%= link_to 'Borrow', borrow_book_path(book) %></td>
+        <%if book.university == current_user.university  && book.nums_total<book.nums_borrowed && book.is_special==false%>
+         <td><%= link_to 'Borrow', borrow_book_path(book) %></td>
+          <%end%>
       <% end %>
     </tr>
   <% end %>

@@ -15,6 +15,7 @@
 <td>Summary: <%= @book.summary %></td><br>
 <td>Edition: <%= @book.edition %></td><br>
 <td>Language: <%= @book.language %></td><br>
+  <td>Nums Request: <%= @book.nums_request %></td><br>
 <td>Published Time: <%= @book.published_time %></td><br>
 <td>Subject: <%= @book.subject %></td><br>
   <td>Nums_total: <%= @book.nums_total %></td><br>
@@ -26,10 +27,16 @@
 <%if current_user.role=='admin' || current_user.library==@book.library %>
 <%= link_to 'Edit', edit_book_path(@book) %>
   <%end %>
-<%if @book.is_special == 'true' %>
-  <%= link_to 'Request', request_book_path(@book) %>
+<%if @book.is_special == 'true' && current_user.unversity==@book.university %>
+  <%= link_to 'Request Special Book', request_book_path(@book) %>
 <%else %>
-
+  <%if current_user.university==@book.university && @book.is_special==false && @book.nums_borrowed<@book.nums_total%>
+    <td><%= link_to 'Borrow', borrow_book_path(@book) %></td>
+  <%end %>
+<!--  request a non-special book which has all been borrowed below-->
+  <%if current_user.university==@book.university && @book.is_special==false && @book.nums_borrowed>=@book.nums_total%>
+    <td><%= link_to 'Request Book' %></td>
+  <%end %>
 <%end %>
 <% if BookMark.find_by_student_email_and_book_isbn(current_user.email,@book.isbn)== nil %>
   <%= link_to 'Mark', mark_book_path(@book) %>

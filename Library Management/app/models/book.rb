@@ -18,6 +18,7 @@ class Book < ApplicationRecord
   validates :library, presence: false
   # validates :image, presence: false
   validates :summary, presence: false
-  validates :nums_total, presence: true
-  validates :nums_borrowed, presence:true
+  validates :nums_total, presence: true,numericality: { greater_than_or_equal_to: 0 }
+  validates :nums_borrowed, presence:true,numericality: { greater_than_or_equal_to: 0 }
+  validates :university, presence:false
 end
