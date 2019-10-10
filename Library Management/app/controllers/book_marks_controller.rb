@@ -59,6 +59,7 @@ class BookMarksController < ApplicationController
   # DELETE /book_marks/1
   # DELETE /book_marks/1.json
   def destroy
+    @book_mark=BookMark.find(params[:id])
     @book_mark.destroy
     respond_to do |format|
       format.html { redirect_to book_marks_url, notice: 'Book mark was successfully destroyed.' }

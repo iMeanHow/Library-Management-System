@@ -63,6 +63,12 @@ class LibrariesController < ApplicationController
   # DELETE /libraries/1
   # DELETE /libraries/1.json
   def destroy
+    @book=Book.find_by_sql("select * from books where library= '%#{@library.name}%'")
+    if not @book.nil?
+      @book.each do|bk|
+        bk.destroy
+      end
+    end
     @library.destroy
     respond_to do |format|
       format.html { redirect_to libraries_url, notice: 'Library was successfully destroyed.' }

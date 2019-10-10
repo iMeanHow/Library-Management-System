@@ -5,33 +5,54 @@ class BookRequestsController < ApplicationController
   def approve
     email = params[:email]
     isbn = params[:isbn]
+    book=Book.find_by_isbn(isbn)
+    if(book.nums_borrowed>=book.nums_total)
+      redirect_to  book_requests_path, notice: 'Can not approve! No book left in the library.'
+    end
     id = params[:id]
     bookrequest = BookRequest.find(id)
     bookrequest.is_accomplished = true
     bookrequest.save
-    @book=Book.find_by_isbn(isbn)
-    @book.nums_request=@book.nums_request-1
-    @book.save
+    # @book = Book.find_by_isbn(isbn)
+    # @book.nums_request = @book.nums_request - 1
+    # @book.save
+    user=User.find_by_email(email)
+    book.nums_request -=1
+    if book.nums_request<0
+      book.nums_request=0
+    end
+    book.save
     redirect_to borrow_book_without_check_path(email: email, isbn: isbn)
   end
 
   def deny
     id = params[:id]
     isbn = params[:isbn]
-    @book=Book.find_by_isbn(isbn)
-    @book.nums_request=@book.nums_request-1
-    @book.save
     bookrequest = BookRequest.find(id)
+    @book=Book.find_by_isbn(isbn)
+     #minus the request num if canceled by student
+      @book.nums_request = @book.nums_request - 1
+      if    @book.nums_request<0
+        @book.nums_request=0
+      end
+      @book.save
+    bookrequest.is_delete=true
     bookrequest.is_accomplished = true
     bookrequest.save
-    redirect_to book_requests_path
+    @user=User.find_by_email(bookrequest.student_email)
+    LibMailer.send_failure_email(@user,@book).deliver_now
+    redirect_to book_requests_path(id: isbn)
   end
 
+  def holdrequestindex()
+    @book_hold_requests = BookRequest.find_by_sql("select * from book_requests where is_hold_request = true")
+  end
 
   # GET /book_requests
   # GET /book_requests.json
-  def index
-    @book_requests = BookRequest.all
+  def index()
+    @book_requests = BookRequest.find_by_sql("select * from book_requests where is_hold_request = false")
+    # @book_requests = BookRequest.all
   end
 
   # GET /book_requests/1
@@ -81,9 +102,12 @@ class BookRequestsController < ApplicationController
   # DELETE /book_requests/1
   # DELETE /book_requests/1.json
   def destroy
+    @user=User.find_by_email(@book_request.student_email)
+    @book=Book.find_by_isbn(@book_request.book_isbn)
+    LibMailer.send_failure_email(@user,@book).deliver_now
     @book_request.destroy
     respond_to do |format|
-      format.html { redirect_to book_requests_url, notice: 'Book request was successfully destroyed.' }
+      format.html { redirect_to books_url, notice: 'Book request was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
@@ -97,6 +121,6 @@ class BookRequestsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def book_request_params
-    params.require(:book_request).permit(:is_delete, :is_accomplished, :book_title, :book_isbn, :student_name, :student_email, :library)
+    params.require(:book_request).permit(:is_delete, :is_accomplished, :book_title, :book_isbn, :student_name, :student_email, :library,:ishold)
   end
 end
