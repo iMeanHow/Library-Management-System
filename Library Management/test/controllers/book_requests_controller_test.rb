@@ -9,7 +9,14 @@ class BookRequestsControllerTest < ActionDispatch::IntegrationTest
     get book_requests_url
     assert_response :success
   end
+  
+  test "should not approve without email" do
+    assert_not approve_book_request_path(isbn: "sdf")
+  end
 
+  test "should not deny without isbn" do
+    assert_not deny_book_request_path(email: "sdf")
+  end
   test "should get new" do
     get new_book_request_url
     assert_response :success

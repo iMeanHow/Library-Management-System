@@ -10,10 +10,10 @@
     <%= link_to "Sign Up", signup_path %> or
     <%= link_to "Log In", login_path %><br><br>
   <% end %>
-<td><%=book_request.book_title %></td>
-<td><%=book_request.book_isbn %></td>
-<td><%=book_request.student_name %></td>
-<td><%=book_request.student_email %></td>
-  <td><%=book_request.library %></td>
+<td><%=@book_request.book_title %></td>
+<td><%=@book_request.book_isbn %></td>
+<td><%=@book_request.student_name %></td>
+<td><%=@book_request.student_email %></td>
+  <td><%=@book_request.library %></td>
 </tr>
 <%= link_to 'Back', book_requests_path %>

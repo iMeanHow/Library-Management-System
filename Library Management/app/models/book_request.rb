@@ -7,4 +7,5 @@ class BookRequest < ApplicationRecord
   validates :student_email, presence: true
   validates :is_delete, presence: false
   validates :is_accomplished, presence: false
+  validates :is_hold_request, presence: false
 end

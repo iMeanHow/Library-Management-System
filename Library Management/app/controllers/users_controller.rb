@@ -35,15 +35,20 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    @user.fine=0
     if @user.role == "librarian"
       @user.librariansrequest = true
     else
       @user.librariansrequest = false
     end
-    if @user.email=="admin@test.com"
-      @user.role="admin"
+    if @user.email == "admin@test.com"
+      @user.role = "admin"
     end
     @user.borrow_num = 0
+    if(current_user!=nil && current_user.role=='admin' && @user.role=='librarian')
+      @user.librariansrequest=false
+    end
+    if(current_user==nil)
     respond_to do |format|
       if @user.save
         session[:user_id] = @user.id
@@ -52,6 +57,17 @@ class UsersController < ApplicationController
       else
         format.html { render :new }
         format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
+    end
+    else
+      respond_to do |format|
+        if @user.save
+          format.html { redirect_to @user, notice: 'User was successfully created.' }
+          format.json { render :show, status: :created, location: @user }
+        else
+          format.html { render :new }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -73,20 +89,30 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @bh=BookHistory.find_by_student_email(current_user.email)
-    @bh.each do |bh|
-      if(bh.is_returned==false)
-        @book=Book.find_by_isbn(bh.book_isbn)
-        @book.nums_total= @book.nums_total -1
-        @book.num_borrowed= @book.nums_borrowed -1
-        @book.save
-      end
+    @bh = BookHistory.find_by_sql("select * from book_histories where student_email= '%#{@user.email}%'")
+    if not @bh.nil?
+      @bh.each do |bh|
+        if (bh.is_returned == false)
+          @book = Book.find_by_isbn(bh.book_isbn)
+          @book.nums_total = @book.nums_total -1
+          @book.num_borrowed = @book.nums_borrowed -1
+          @book.save
+        end
 
-      bh.destroy
+        bh.destroy
+      end
     end
-    @bm=BookMark.find_by_student_email(current_user.email)
-    @bh.each do |bh|
-      @bm.destroy
+    @bm = BookMark.find_by_student_email(@user.email)
+    if not @bm.nil?
+      @bm.each do |bm|
+        bm.destroy
+      end
+    end
+    @bq=BookRequest.find_by_student_email(@user.email)
+    if not @bq.nil?
+      @bq.each do |bq|
+        bq.destroy
+      end
     end
     @user.destroy
     respond_to do |format|
@@ -102,7 +128,7 @@ class UsersController < ApplicationController
   def approvelibrarian()
     print(params[:email])
     @needtoapprove = User.find_by_email(params[:email])
-    @needtoapprove.librariansrequest= false
+    @needtoapprove.librariansrequest = false
     @needtoapprove.save
     redirect_to librarian_requests_path, notice: 'Approved!'
   end
@@ -116,6 +142,6 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:email, :name, :password, :password_confirmation, :role, :library, :fine, :borrow_num, :education_level,:university)
+    params.require(:user).permit(:email, :name, :password, :password_confirmation, :role, :library, :fine, :borrow_num, :education_level, :university)
   end
 end

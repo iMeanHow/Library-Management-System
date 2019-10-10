@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Book Requests</h1>
+<h1>Special Book Requests</h1>
 <% if current_user %>
 
   Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
@@ -27,28 +27,78 @@
   <% if current_user.role == 'admin' %>
     <% @book_requests.each do |book_request| %>
       <tr>
+        <% if book_request.is_accomplished == false %>
         <td><%= book_request.book_title %></td>
         <td><%= book_request.book_isbn %></td>
         <td><%= book_request.student_name %></td>
         <td><%= book_request.student_email %></td>
         <% if book_request.is_accomplished == false %>
+          <%@book=Book.find_by_isbn(book_request.book_isbn) %>
+            <%@user=User.find_by_email(book_request.student_email) %>
+            <%max=1<<64 %>
+            <%
+              if (@user.role=='student'&&@user.education_level == 'undergraduate')
+                max =2
+              end
+              if (@user.role=='student'&&@user.education_level == 'master')
+                max =4
+              end
+              if (@user.role=='student'&&@user.education_level == 'phd')
+                max=6
+              end
+            %>
+            <%if @book.nums_total<=@book.nums_borrowed %>
+            <td>No book left, cannot approve.</td>
+            <%else %>
+              <%if @user.nums_total>=max %>
+                Max borrow num reached, cannot approve.
+                <%end %>
           <td><%= link_to 'Approve', {:controller => "book_requests", :action => "approve", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+            <%end %>
           <!--        <td><%#= link_to 'Edit', edit_book_request_path(book_request) %></td>-->
-          <td><%= link_to 'Deny', {:controller => "book_requests", :action => "deny", :id => book_request.id} %></td>
+          <td><%= link_to 'Deny', {:controller => "book_requests", :action => "deny", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
         <% end %>
+          <%end %>
       </tr>
     <% end %>
   <% end %>
+
+  <% if current_user.role == 'librarian' %>
+    <% @book_requests.each do |book_request| %>
+      <% if current_user.library == book_request.library %>
+      <tr>
+        <% if book_request.is_accomplished == false %>
+        <td><%= book_request.book_title %></td>
+        <td><%= book_request.book_isbn %></td>
+        <td><%= book_request.student_name %></td>
+        <td><%= book_request.student_email %></td>
+          <%@book=Book.find_by_isbn(book_request.book_isbn) %>
+          <%if @book.nums_total<=@book.nums_borrowed %>
+            <td>No book left, cannot approve.</td>
+          <%else %>
+          <td><%= link_to 'Approve', {:controller => "book_requests", :action => "approve", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+          <!--        <td><%#= link_to 'Edit', edit_book_request_path(book_request) %></td>-->
+          <td><%= link_to 'Deny', {:controller => "book_requests", :action => "deny", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+          <%end %>
+          <% end %>
+      </tr>
+      <%end %>
+    <% end %>
+  <% end %>
+
   <% if current_user.role == 'student' %>
+
     <% @book_requests.each do |book_request| %>
       <tr>
-
-        <% if current_user.email == book_request.student_email %>
+        <% if current_user.email == book_request.student_email && book_request.is_delete==false && book_request.is_accomplished==false%>
           <td><%= book_request.book_title %></td>
           <td><%= book_request.book_isbn %></td>
           <td><%= book_request.student_name %></td>
           <td><%= book_request.student_email %></td>
-          <!--        <td><%#= link_to 'cancel',  %></td>             implement cancel and complete request for book-->
+          <% if book_request.is_accomplished == false %>
+            <td><%= link_to 'cancel', {:controller => "book_requests", :action => "deny", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+
+          <% end %>
           <!--        <td><%#= link_to 'complete',  %></td>-->
           </tr>
 

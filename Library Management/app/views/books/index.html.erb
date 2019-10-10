@@ -25,6 +25,7 @@
     <th>ISBN</th>
     <th>Library</th>
     <th>Request Number</th>
+    <th></th>
     <th colspan="3"></th>
   </tr>
   </thead>
@@ -36,6 +37,7 @@
       <td><%= book.isbn %></td>
       <td><%= book.library %></td>
       <td><%= book.nums_request %></td>
+
       <td><%= link_to 'Show', book %></td>
 
       <% if current_user.role == 'admin' || (current_user.role == 'librarian' && current_user.library == book.library) %>
@@ -43,20 +45,26 @@
 
         <td><%= link_to 'Destroy', book, method: :delete, data: {confirm: 'Are you sure?'} %></td>
       <% end %>
-      <% if book.nums_borrowed >= book.nums_total %>
-        <td> All Borrowed!</td>
 
-      <% else %>
-        <%if book.university == current_user.university  && book.nums_total<book.nums_borrowed && book.is_special==false%>
-         <td><%= link_to 'Borrow', borrow_book_path(book) %></td>
-          <%end%>
+        <%# if book.university == current_user.university && book.nums_total >= book.nums_borrowed %>
+        <% if (book.nums_total > book.nums_borrowed && book.is_special==false)&&(current_user.university==book.university||current_user.role=='admin'||(current_user.role=='librarian'&&current_user.library==book.library))%>
+          <td><%= link_to 'Borrow', borrow_book_path(book, :isbn => book.isbn) %></td>
+        <% end %>
+        <% if book.nums_total <= book.nums_borrowed && book.is_special==false%>
+          <td><%= link_to 'Request book', borrow_book_path(book, :isbn => book.isbn) %> </td>
+        <% end %>
+        <% if book.nums_total >= book.nums_borrowed && book.is_special==true%>
+          <td><%= link_to 'Request for special book', borrow_book_path(book, :isbn => book.isbn) %> </td>
+
       <% end %>
     </tr>
   <% end %>
   </tbody>
 </table>
-
-<br>
-<% if current_user.role == 'admin' ||(current_user.role == 'librarian'&&!current_user.library.nil?) %>
+<br><br>
+Unspecial book -- Request book = add to the hold request list with out any approval, when the book is returned and student's max borrow num isn't exceed, the book will be borrowed automatically.<br>
+Special Book must be available when approved by librarian/admin and student cannot reach max borrow number. Otherwise, it cannot be approved.<br>
+Email notification is available for borrow, borrow after hold request/special request and deny/cancel request.<br><br>
+<% if current_user.role == 'admin' || (current_user.role == 'librarian' && !current_user.library.nil?) %>
   <%= link_to 'New Book', new_book_path %>
 <% end %>

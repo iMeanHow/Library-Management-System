@@ -42,7 +42,7 @@
     <%end %>
     <%if current_user.role=='librarian' %>
     <% @book_histories.each do |book_history| %>
-      <%if current_user.library==book_history.library ||current_user.email==book_history.student_email %>
+      <%if current_user.library==book_history.library ||current_user.email==book_history.student_email && book_history.is_returned==false%>
       <td><%= book_history.book_title %></td>
       <td><%= book_history.book_isbn %></td>
         <td><%= book_history.student_name %></td>
@@ -60,7 +60,7 @@
 
     <%if current_user.role=='student' %>
     <% @book_histories.each do |book_history| %>
-      <%if current_user.email==book_history.student_email %>
+      <%if current_user.email==book_history.student_email && book_history.is_returned==false %>
         <td><%= book_history.book_title %></td>
         <td><%= book_history.book_isbn %></td>
         <td><%= book_history.student_name %></td>

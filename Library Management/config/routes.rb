@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'books/:id/mark_book', to: 'books#mark_book', as: 'mark_book'
   get 'books/:id/unmark_book', to: 'books#unmark_book', as: 'unmark_book'
   get 'books/:id/book_request', to: 'books#book_request', as: 'request_book'
+  get 'books_hold_requests', to: 'book_requests#holdrequestindex', as: 'hold_requests_list'
   get 'books_approve', to: 'book_requests#approve', as: 'approve_book_request'
   get 'books_deny', to: 'book_requests#deny', as: 'deny_book_request'
   get 'book_histories/:id/book_return', to: 'book_histories#book_return', as: 'book_return'

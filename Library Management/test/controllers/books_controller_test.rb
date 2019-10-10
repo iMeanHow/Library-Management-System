@@ -45,4 +45,8 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to books_url
   end
+
+  test "should pass" do
+
+  end
 end

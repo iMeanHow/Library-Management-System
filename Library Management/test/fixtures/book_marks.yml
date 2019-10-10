@@ -7,7 +7,7 @@ one:
   student_email: MyString
 
 two:
-  book_isbn: MyString
-  book_title: MyString
-  student_name: MyString
-  student_email: MyString
+  book_isbn: MyString2
+  book_title: MyString2
+  student_name: MyString2
+  student_email: MyString2

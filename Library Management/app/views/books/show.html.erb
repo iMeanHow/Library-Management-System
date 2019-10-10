@@ -18,8 +18,10 @@
   <td>Nums Request: <%= @book.nums_request %></td><br>
 <td>Published Time: <%= @book.published_time %></td><br>
 <td>Subject: <%= @book.subject %></td><br>
-  <td>Nums_total: <%= @book.nums_total %></td><br>
-  <td>Nums_left: <%= @book.nums_total-@book.nums_borrowed %></td><br>
+  <td>Special: <%= @book.is_special %></td><br>
+  <td>Nums Total: <%= @book.nums_total %></td><br>
+  <td>Nums Left: <%= @book.nums_total-@book.nums_borrowed %></td><br>
+  <td>Nums Request: <%= @book.nums_request %></td><br>
   <br>
 <%= image_tag @book.image.url %>
 <%= image_tag @book.image.url(:medium) %>
@@ -27,15 +29,15 @@
 <%if current_user.role=='admin' || current_user.library==@book.library %>
 <%= link_to 'Edit', edit_book_path(@book) %>
   <%end %>
-<%if @book.is_special == 'true' && current_user.unversity==@book.university %>
-  <%= link_to 'Request Special Book', request_book_path(@book) %>
+<%if @book.is_special == true && (current_user.university==@book.university || current_user.library==@book.library||current_user.role=='admin') %>
+  <%= link_to 'Request Special Book', request_book_path(@book, :isbn => @book.isbn) %>
 <%else %>
   <%if current_user.university==@book.university && @book.is_special==false && @book.nums_borrowed<@book.nums_total%>
-    <td><%= link_to 'Borrow', borrow_book_path(@book) %></td>
+    <td><%= link_to 'Borrow', borrow_book_path(@book, :isbn => @book.isbn) %></td>
   <%end %>
 <!--  request a non-special book which has all been borrowed below-->
   <%if current_user.university==@book.university && @book.is_special==false && @book.nums_borrowed>=@book.nums_total%>
-    <td><%= link_to 'Request Book' %></td>
+    <td><%= link_to 'Request Book', borrow_book_path(@book, :isbn => @book.isbn) %></td>
   <%end %>
 <%end %>
 <% if BookMark.find_by_student_email_and_book_isbn(current_user.email,@book.isbn)== nil %>

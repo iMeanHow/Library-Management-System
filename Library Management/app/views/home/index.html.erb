@@ -16,11 +16,10 @@
       <b>this is admin area</b><br>
       <%= link_to "View Librarian Requests", librarian_requests_path %><br>
     <% end %>
-    <% if current_user.role == "librarian" || current_user.role == "admin" %>
 
       <%= link_to "View Special Book Borrow Requests", book_requests_path %><br>
 
-    <% end %>
+    <%= link_to "View Hold Requests", hold_requests_list_path%><br>
     <%= link_to "Book Return Management", book_histories_path %><br>
     <%= link_to "Book List", books_path %><br>
     <%= link_to "User Management & Overdue Management", users_path %><br>
@@ -36,7 +35,7 @@
 <br><br><br>
 
 <b>Hint: </b><br>
-<b>Admin email:    admin@test.com</b><br>
+<b>Admin email:    admin@library.com</b><br>
 <b>Admin password: 123</b>
 <br><br><br>
-<b>Versin 1.1</b>
+<b>Versin 2.0</b>
