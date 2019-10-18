@@ -27,11 +27,7 @@
       <%= form.text_field :name %>
     </div>
 
-    <div class="field">
-      <%= form.label :email %>
-      <%= form.text_field :email %>
-    </div>
-
+    <%if @user.role=='admin' %>
     <div class="field">
       <%= form.label :password %>
       <%= form.password_field :password %>
@@ -41,7 +37,20 @@
       <%= form.label :password_confirmation %>
       <%= form.password_field :password_confirmation %>
     </div>
+    <%end %>
+    <%if @user.role=='librarian' %>
+      <div class="field">
+        <%= form.label :library %><br>
+        <%= form.select :library, options_for_select(Library.all.collect { |a| [a.name] }) %>
+      </div>
+      <%end %>
+    <%if @user.role=='student' %>
+      <div class="field">
+        <%= form.label :education_level %>
+        <%= form.select :education_level, %w(undergraduate master phd) %>
+      </div>
 
+    <%end %>
 
 
     <div class="actions">
@@ -63,16 +72,12 @@
           </ul>
         </div>
       <% end %>
-      <% current_user==nil %>
+
       <div class="field">
         <%= form.label :name %>
         <%= form.text_field :name %>
       </div>
 
-      <div class="field">
-        <%= form.label :email %>
-        <%= form.text_field :email %>
-      </div>
 
       <div class="field">
         <%= form.label :password %>
@@ -113,16 +118,11 @@
           </ul>
         </div>
       <% end %>
-      <% current_user==nil %>
       <div class="field">
         <%= form.label :name %>
         <%= form.text_field :name %>
       </div>
 
-      <div class="field">
-        <%= form.label :email %>
-        <%= form.text_field :email %>
-      </div>
 
       <div class="field">
         <%= form.label :password %>
@@ -138,6 +138,7 @@
       <%= form.label :education_level %>
       <%= form.select :education_level, %w(undergraduate master phd) %>
     </div>
+
       <div class="actions">
         <%= form.submit %>
       </div>

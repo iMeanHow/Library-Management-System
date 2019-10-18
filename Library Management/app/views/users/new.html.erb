@@ -1,4 +1,4 @@
-<h1>New User</h1>
+<h1>New Users</h1>
 <% if current_user %>
 
   Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
@@ -9,6 +9,8 @@
   <%= link_to "Log In", login_path %><br><br>
 <% end %>
 
-<%= render 'form', user: @user %>
+<%= link_to "New Students", signup_student_path %> or
+<%= link_to "New Librarian", signup_librarian_path %>
+
 
 <%= link_to 'Back', users_path %>

@@ -1,10 +1,21 @@
-<%= form_with(model: user, local: true) do |form| %>
-  <% if user.errors.any? %>
+<h1>New Librarian</h1>
+<% if current_user %>
+
+  Hi,<%= current_user.name %> ! Logged in as <%= current_user.email %>.
+  <%= link_to "Log Out", logout_path %><br>
+  <%= link_to "Home", root_url %><br><br>
+<%else %>
+  <%= link_to "Sign Up", signup_path %> or
+  <%= link_to "Log In", login_path %><br><br>
+<% end %>
+
+<%= form_with(model: @user, local: true) do |form| %>
+  <% if @user.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
       <ul>
-        <% user.errors.full_messages.each do |message| %>
+        <% @user.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
@@ -36,14 +47,17 @@
   </div>
 
   <div class="field">
-    <%= form.select :role, %w(student)%>
+    <%= form.label :library %><br>
+    <%= form.select :library, options_for_select(Library.all.collect { |a| [a.name] }) %>
   </div>
 
   <div class="field">
-    <%= form.select :university, %w(NCSU UNC DUKE)%>
+    <%= form.select :role, %w(librarian)%>
   </div>
 
   <div class="actions">
     <%= form.submit %>
   </div>
 <% end %>
+
+<%= link_to 'Back', users_path %>
