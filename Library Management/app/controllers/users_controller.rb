@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-  before_action :verify, except: [:new, :create]
+  before_action :verify, except: [:new, :create,:new_librarian,:new_student]
   # GET /users
   # GET /users.json
   def index
@@ -18,6 +18,9 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
+    if current_user.role!='admin' && @user.email!=current_user.email
+      redirect_to home_index_path
+    end
     overdue_calculator
   end
 
@@ -26,14 +29,26 @@ class UsersController < ApplicationController
     @user = User.new
   end
 
+  def new_student
+    @user = User.new
+    @user.role='student'
+  end
+  def new_librarian
+    @user = User.new
+    @user.role ='librarian'
+  end
+
   # GET /users/1/edit
   def edit
-
+    if current_user.role!='admin' && @user.email!=current_user.email
+      redirect_to home_index_path
+    end
   end
 
   # POST /users
   # POST /users.json
   def create
+
     @user = User.new(user_params)
     @user.fine=0
     if @user.role == "librarian"
@@ -75,6 +90,9 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    if user.role!='admin'
+      @user=current_user
+    end
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
@@ -89,26 +107,22 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @bh = BookHistory.find_by_sql("select * from book_histories where student_email= '%#{@user.email}%'")
-    if not @bh.nil?
-      @bh.each do |bh|
-        if (bh.is_returned == false)
-          @book = Book.find_by_isbn(bh.book_isbn)
-          @book.nums_total = @book.nums_total -1
-          @book.num_borrowed = @book.nums_borrowed -1
-          @book.save
-        end
-
-        bh.destroy
-      end
+    if current_user.role!='admin'
+      redirect_to home_index_path
     end
-    @bm = BookMark.find_by_student_email(@user.email)
+    @bh = BookHistory.find_by_student_email(@user.email)
+    if not @bh.nil?
+      respond_to do |format|
+        format.html { redirect_to book_histories_path, notice: 'Books not returned yet, cannot delete' }
+        end
+    else
+    @bm = BookMark.where(:student_email => @user.email)
     if not @bm.nil?
       @bm.each do |bm|
         bm.destroy
       end
     end
-    @bq=BookRequest.find_by_student_email(@user.email)
+    @bq=BookRequest.where(:student_email => @user.email)
     if not @bq.nil?
       @bq.each do |bq|
         bq.destroy
@@ -119,13 +133,20 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
+      end
   end
 
   def viewrequests
+    if current_user.role!='admin'
+      redirect_to home_index_path
+    end
     @librariansNeedtoApprove = User.find_by_sql("select * from users where librariansrequest = 'true'")
   end
 
   def approvelibrarian()
+    if current_user.role!='admin'
+      redirect_to home_index_path
+    end
     print(params[:email])
     @needtoapprove = User.find_by_email(params[:email])
     @needtoapprove.librariansrequest = false

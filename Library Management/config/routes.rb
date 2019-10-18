@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   get 'sessions/destroy'
   get 'home/index'
   get 'signup', to: 'users#new', as: 'signup'
+
+  get 'signup_student', to: 'users#new_student', as: 'signup_student'
+  get 'signup_librarian', to: 'users#new_librarian', as: 'signup_librarian'
   get 'login', to: 'sessions#new', as: 'login'
   get 'logout', to: 'sessions#destroy', as: 'logout'
   get 'librarianrequest', to: 'users#viewrequests', as: 'librarian_requests'

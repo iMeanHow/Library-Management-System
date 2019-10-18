@@ -50,7 +50,7 @@
             <%if @book.nums_total<=@book.nums_borrowed %>
             <td>No book left, cannot approve.</td>
             <%else %>
-              <%if @user.nums_total>=max %>
+              <%if @user.borrow_num>=max %>
                 Max borrow num reached, cannot approve.
                 <%end %>
           <td><%= link_to 'Approve', {:controller => "book_requests", :action => "approve", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
@@ -72,14 +72,32 @@
         <td><%= book_request.book_isbn %></td>
         <td><%= book_request.student_name %></td>
         <td><%= book_request.student_email %></td>
-          <%@book=Book.find_by_isbn(book_request.book_isbn) %>
-          <%if @book.nums_total<=@book.nums_borrowed %>
-            <td>No book left, cannot approve.</td>
-          <%else %>
-          <td><%= link_to 'Approve', {:controller => "book_requests", :action => "approve", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
-          <!--        <td><%#= link_to 'Edit', edit_book_request_path(book_request) %></td>-->
-          <td><%= link_to 'Deny', {:controller => "book_requests", :action => "deny", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
-          <%end %>
+          <% if book_request.is_accomplished == false %>
+            <%@book=Book.find_by_isbn(book_request.book_isbn) %>
+            <%@user=User.find_by_email(book_request.student_email) %>
+            <%max=1<<64 %>
+            <%
+              if (@user.role=='student'&&@user.education_level == 'undergraduate')
+                max =2
+              end
+              if (@user.role=='student'&&@user.education_level == 'master')
+                max =4
+              end
+              if (@user.role=='student'&&@user.education_level == 'phd')
+                max=6
+              end
+            %>
+            <%if @book.nums_total<=@book.nums_borrowed %>
+              <td>No book left, cannot approve.</td>
+            <%else %>
+              <%if @user.borrow_num>=max %>
+                Max borrow num reached, cannot approve.
+              <%end %>
+              <td><%= link_to 'Approve', {:controller => "book_requests", :action => "approve", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+            <%end %>
+            <!--        <td><%#= link_to 'Edit', edit_book_request_path(book_request) %></td>-->
+            <td><%= link_to 'Deny', {:controller => "book_requests", :action => "deny", :email => book_request.student_email, :isbn => book_request.book_isbn, :id => book_request.id} %></td>
+          <% end %>
           <% end %>
       </tr>
       <%end %>

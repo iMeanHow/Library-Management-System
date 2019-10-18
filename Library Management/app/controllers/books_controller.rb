@@ -68,7 +68,10 @@ class BooksController < ApplicationController
     if (user.role=='student'&&user.education_level == 'phd')
       max=6
     end
-
+    if(user.borrow_num.nil?)
+      user.borrow_num=0
+      user.save
+    end
     if(user.borrow_num>=max)
       redirect_to book,notice: 'Borrow failed! Max borrow num was reached.'
     end
@@ -108,7 +111,7 @@ class BooksController < ApplicationController
     @book = Book.find_by_isbn(params[:isbn])
     @user1=User.find_by_email(params[:email])
     @library = Library.find_by_name(@book.library)
-    if ((current_user.role == 'librarian' && current_user.library == @library.name) || current_user.university == @library.university)
+    if (current_user.role=='admin'||(current_user.role == 'librarian' && current_user.library == @library.name) || current_user.university == @library.university)
       if (@book.is_special == true)
         book_request
         return
@@ -127,7 +130,7 @@ class BooksController < ApplicationController
     @book = Book.find_by_isbn(params[:isbn])
 
     @library = Library.find_by_name(@book.library)
-    if ((current_user.role == 'librarian' && current_user.library == @library.name) || current_user.university == @library.university||current_user.role=='admin')
+    if (current_user.role=='admin'||(current_user.role == 'librarian' && current_user.library == @library.name) || current_user.university == @library.university||current_user.role=='admin')
       @book_request = BookRequest.new
       @book_request.book_title = @book.title
       @book_request.book_isbn = @book.isbn
@@ -245,17 +248,27 @@ class BooksController < ApplicationController
   def destroy
 
     @book = Book.find(params[:id])
-    @bh=BookHistory.find_by_sql("select * from book_histories where book_isbn= '%#{@book.isbn}%'")
+    if @book.nums_borrowed >0
+      respond_to do |format|
+        format.html { redirect_to @book, notice: 'Not returned yet, cannot delete' }
+      end
+    else
+
+    @bh=BookHistory.where(:book_isbn => @book.isbn)
     @bh.each do|bh|
       bh.destroy
     end
-    @br=BookRequest.find_by_sql("select * from book_requests where book_isbn= '%#{@book.isbn}%'")
+    @br=BookRequest.where(:book_isbn => @book.isbn)
     @br.each do|br|
       br.destroy
     end
+    @bm=BookMark.where(:book_isbn => @book.isbn)
+    @bm.each do|bm|
+      bm.destroy
+    end
     if verify_admin || (verify_librarian && current_user.role == 'librarian' && current_user.library == @book.library)
-      @book.is_delete = true
-      @book.save
+
+      @book.destroy
       respond_to do |format|
         format.html { redirect_to books_url, notice: 'Book was successfully deleted.' }
         format.json { head :no_content }
@@ -266,6 +279,7 @@ class BooksController < ApplicationController
         format.json { head :no_content }
       end
     end
+      end
   end
 
   def booksearch
