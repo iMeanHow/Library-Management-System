@@ -1,6 +1,5 @@
 # Version 2.0
 
-Version 2.0 has been runnig on https://iwolflib.herokuapp.com/
 
 ===================================================================
 
